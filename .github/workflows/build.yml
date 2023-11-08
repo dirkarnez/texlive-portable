@@ -32,7 +32,7 @@ jobs:
       - shell: cmd
         run: |
           md export &&^
-          7z a -r -tzip -v100m export\${{ env.target }} texlive\*
+          cd texlive && 7z.exe -r -tzip -v100m a ..\export\${{ env.target }}
 
       - shell: cmd
         run: |
