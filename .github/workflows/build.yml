@@ -1,0 +1,44 @@
+name: portable-release-actions-workflow
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - '20*' # 2023.1.17f1
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: windows-latest
+    env:
+      targetZip: texlive-portable-${{ github.ref_name }}.zip
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: lessmsi 
+        shell: cmd
+        run: | 
+          curl https://mirror-hk.koddos.net/CTAN/systems/texlive/tlnet/install-tl-windows.exe -L --output installer.exe
+
+      - shell: cmd
+        run: |
+          7z.exe x installer.exe
+
+      - shell: cmd
+        run: |
+          cd $PLUGINSDIR\install-tl-20231107 &&^
+          cmd /c "..\..\make-portable-installation.cmd" &&^
+          dir
+
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: "texlive"
+          filename: "${{ env.targetZip }}"
+          
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ env.targetZip }}"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
