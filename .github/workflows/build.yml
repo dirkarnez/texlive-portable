@@ -10,7 +10,7 @@ jobs:
     name: Create Release
     runs-on: windows-latest
     env:
-      targetZip: texlive-portable-${{ github.ref_name }}.zip
+      target: texlive-portable-${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
       
@@ -28,17 +28,33 @@ jobs:
           cd $PLUGINSDIR\install-tl-20231107 &&^
           cmd /c "..\..\make-portable-installation.cmd" &&^
           dir
+          
+      - shell: cmd
+        run: |
+          md export &&^
+          7z a -tzip -v100m export\${{ env.target }} texlive
 
-      - name: Archive Release
-        uses: thedoctor0/zip-release@master
-        with:
-          type: 'zip'
-          directory: "texlive"
-          filename: "${{ env.targetZip }}"
+      - shell: cmd
+        run: |
+          dir /s
           
       - name: Release prebuilt
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "texlive/${{ env.targetZip }}"
+          artifacts: "export/*"
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Archive Release
+      #   uses: thedoctor0/zip-release@master
+      #   with:
+      #     type: 'zip'
+      #     directory: "texlive"
+      #     filename: "${{ env.targetZip }}"
+          
+      # - name: Release prebuilt
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: "texlive/${{ env.targetZip }}"
+      #     allowUpdates: true
+      #     token: ${{ secrets.GITHUB_TOKEN }}
