@@ -10,7 +10,7 @@ jobs:
     name: Create Release
     runs-on: windows-latest
     env:
-      target: texlive-portable-${{ github.ref_name }}
+      targetZip: texlive-portable-${{ github.ref_name }}.zip
     steps:
       - uses: actions/checkout@v4
       
@@ -32,7 +32,7 @@ jobs:
       - shell: cmd
         run: |
           md export &&^
-          cd texlive && 7z.exe -r -tzip -v100m a ..\export\${{ env.target }}
+          cd texlive && 7z.exe a -tzip -v100m  ..\export\${{ env.targetZip }}
 
       - shell: cmd
         run: |
