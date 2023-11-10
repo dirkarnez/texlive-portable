@@ -25,7 +25,7 @@ jobs:
 
       - shell: cmd
         run: |
-          cd $PLUGINSDIR\install-tl-20231107 &&^
+          cd $PLUGINSDIR\install-tl-${{ github.ref_name }} &&^
           cmd /c "..\..\make-portable-installation.cmd" &&^
           dir
           
